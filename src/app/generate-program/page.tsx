@@ -1,9 +1,9 @@
 "use client"
 
 import { Card } from '@/components/ui/card';
-import { vapi } from '@/lib/vapi';
-import { useUser } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
+// import { vapi } from '@/lib/vapi';
+// import { useUser } from '@clerk/nextjs';
+// import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 const GenerateProgramPage = () => {
@@ -14,101 +14,101 @@ const GenerateProgramPage = () => {
     const [messages, setMessages] = useState([]);
     const [callEnded, setCallEnded] = useState(false);
 
-    const { user } = useUser();
-    const router = useRouter();
+    // const { user } = useUser();
+    // const router = useRouter();
 
-    // AUTO SCROLL MESSAGES
-    const messageContainerRef = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        if (messageContainerRef.current) {
-            messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
-        }
-    }, [messages]);
+    // // AUTO SCROLL MESSAGES
+    // const messageContainerRef = useRef<HTMLDivElement>(null);
+    // useEffect(() => {
+    //     if (messageContainerRef.current) {
+    //         messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+    //     }
+    // }, [messages]);
 
-    // NAVIGATE USER TO PROFILE PAGE AFTER THE CALL ENDS
-    useEffect(() => {
-        if (callEnded) {
-            const redirectTimer = setTimeout(() => {
-                router.push('/profile');
-            }, 1500)
+    // // NAVIGATE USER TO PROFILE PAGE AFTER THE CALL ENDS
+    // useEffect(() => {
+    //     if (callEnded) {
+    //         const redirectTimer = setTimeout(() => {
+    //             router.push('/profile');
+    //         }, 1500)
 
-            return () => clearTimeout(redirectTimer);
-        }
-    }, [callEnded, router]);
+    //         return () => clearTimeout(redirectTimer);
+    //     }
+    // }, [callEnded, router]);
 
 
-    // SETUP EVENT LISTNER FOR VAPI
-    useEffect(() => {
+    // // SETUP EVENT LISTNER FOR VAPI
+    // useEffect(() => {
 
-        const handleCallStart = () => {
-            console.log('Call started');
-            setConnecting(false);
-            setCallActive(true);
-            setCallEnded(false);
-        }
-        const handleCallEnd = () => {
-            console.log('Call ended')
-            setCallActive(false);
-            setConnecting(false);
-            setIsSpeaking(false);
-            setCallEnded(true);
-        }
-        const handleSpeechStart = () => {
-            console.log('AI startedSpeaking');
-            setIsSpeaking(true);
-        }
-        const handleSpeechEnd = () => {
-            console.log('AI stoppedSpeaking');
-            setIsSpeaking(false);
-        }
-        const handleMessage = (message: any) => { }
-        const handleError = (error: any) => {
-            console.log('Vapi Error', error);
-            setConnecting(false);
-            setCallActive(false);
-        }
+    //     const handleCallStart = () => {
+    //         console.log('Call started');
+    //         setConnecting(false);
+    //         setCallActive(true);
+    //         setCallEnded(false);
+    //     }
+    //     const handleCallEnd = () => {
+    //         console.log('Call ended')
+    //         setCallActive(false);
+    //         setConnecting(false);
+    //         setIsSpeaking(false);
+    //         setCallEnded(true);
+    //     }
+    //     const handleSpeechStart = () => {
+    //         console.log('AI startedSpeaking');
+    //         setIsSpeaking(true);
+    //     }
+    //     const handleSpeechEnd = () => {
+    //         console.log('AI stoppedSpeaking');
+    //         setIsSpeaking(false);
+    //     }
+    //     const handleMessage = (message: any) => { }
+    //     const handleError = (error: any) => {
+    //         console.log('Vapi Error', error);
+    //         setConnecting(false);
+    //         setCallActive(false);
+    //     }
 
-        vapi.on('call-start', handleCallStart)
-            .on('call-end', handleCallEnd)
-            .on('speech-start', handleSpeechStart)
-            .on('speech-end', handleSpeechEnd)
-            .on('message', handleMessage)
-            .on('error', handleError)
+    //     vapi.on('call-start', handleCallStart)
+    //         .on('call-end', handleCallEnd)
+    //         .on('speech-start', handleSpeechStart)
+    //         .on('speech-end', handleSpeechEnd)
+    //         .on('message', handleMessage)
+    //         .on('error', handleError)
 
-        // CLEAN UP EVENT LISTNER ON UNMOUNT
-        return () => {
-            vapi.off('call-start', handleCallStart)
-                .off('call-end', handleCallEnd)
-                .off('speech-start', handleSpeechStart)
-                .off('speech-end', handleSpeechEnd)
-                .off('message', handleMessage)
-                .off('error', handleError)
-        }
-    }, [])
+    //     // CLEAN UP EVENT LISTNER ON UNMOUNT
+    //     return () => {
+    //         vapi.off('call-start', handleCallStart)
+    //             .off('call-end', handleCallEnd)
+    //             .off('speech-start', handleSpeechStart)
+    //             .off('speech-end', handleSpeechEnd)
+    //             .off('message', handleMessage)
+    //             .off('error', handleError)
+    //     }
+    // }, [])
 
-    // TOGGLE CALL
-    const toggleCall = async () => {
-        if (callActive) vapi.stop();
-        else {
-            try {
-                setConnecting(true);
-                setMessages([]);
-                setCallEnded(false);
+    // // TOGGLE CALL
+    // const toggleCall = async () => {
+    //     if (callActive) vapi.stop();
+    //     else {
+    //         try {
+    //             setConnecting(true);
+    //             setMessages([]);
+    //             setCallEnded(false);
 
-                const fullName = user?.fullName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'There';
-                await vapi.start(process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID!, {
-                    variableValues: {
-                        full_name: fullName,
-                        // TODO: send user_id as well later
-                    }
-                })
+    //             const fullName = user?.fullName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'There';
+    //             await vapi.start(process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID!, {
+    //                 variableValues: {
+    //                     full_name: fullName,
+    //                     // TODO: send user_id as well later
+    //                 }
+    //             })
 
-            } catch (error) {
-                console.log('Failed to start call', error);
-                setConnecting(false);
-            }
-        }
-    }
+    //         } catch (error) {
+    //             console.log('Failed to start call', error);
+    //             setConnecting(false);
+    //         }
+    //     }
+    // }
 
     return (
         <div className='flex flex-col min-h-screen text-foreground overflow-hidden pb-6 pt-24'>
